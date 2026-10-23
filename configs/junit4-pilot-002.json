@@ -1,0 +1,16 @@
+﻿{
+    "_comment":  "JUnit 4 engineering pilot with immutable refs. Not a representative observational sample.",
+    "run_id":  "junit4-pilot-002",
+    "output_dir":  "../results/junit4-pilot-002",
+    "cache_dir":  "../data/repos",
+    "detector_jar":  "../tools/TestSmellDetector.jar",
+    "detector_timeout_seconds":  300,
+    "repositories":  [
+                         {
+                             "id":  "junit4",
+                             "source":  "https://github.com/junit-team/junit4.git",
+                             "snapshot_ref":  "354b72771d70255a860001c6b11786897c1c2fbd",
+                             "followup_ref":  "890f3c972647de378f25e7271d8fbbd9d3456b79"
+                         }
+                     ]
+}

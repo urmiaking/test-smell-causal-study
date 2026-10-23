@@ -39,7 +39,7 @@ The outputs are created under results/synthetic-smoke and include tests.csv, com
 
     python -m team7_pipeline run --config configs/real-pilot.json
 
-The runner creates official input CSV columns (appName, pathToTestFile, pathToProductionFile), copies the JAR to an isolated temporary directory, preserves raw CSV and stdout/stderr, and parses both positive and negative smell labels. Missing/unmatched output is flagged, never turned into False.
+The legacy v2.2 JAR accepts three CSV values per row (appName, pathToTestFile, pathToProductionFile) but NO header row. The runner runs isolated batches, preserves both successful and failed attempts, bisects crashing batches and normalizes count/boolean flags; empty values are explicitly not_applicable, never false. See docs/PILOT_RESULTS.md.
 
 ## Configuration and repository sampling
 
@@ -49,12 +49,12 @@ Select the study repositories based on a documented sampling protocol. Repositor
 
 ## CSV contract
 
-- tests.csv: baseline test filenames, potential production associations, test LOC and an approximate assert-call count.
-- smells.csv: one row per test-smell boolean *only when tsDetect actually measured it*. Empty is not a negative.
+- tests.csv: baseline test candidates, JUnit framework heuristic, potential production associations, test LOC, approximate assert-call count and per-file detector_status.
+- smells.csv: one row per returned test-smell field. smell_status distinguishes measured from not_applicable; raw values and integer counts are preserved. A missing value is not false.
 - commit_events.csv: follow-up file-change events, matching recognized renames. Regex-classified messages are a potential bug-fix proxy only.
 - outcomes.csv: file-level change-proneness, not class-level mutant kill counts.
 - analysis_ready.csv: baseline test data joined with temporally bounded outcomes. Smell labels remain in normalized smells.csv, to be joined on repository_id + snapshot_sha + test_file.
-- repository_status.csv: includes failures; no cherry-picking successful repositories.
+- repository_status.csv: includes failures and partial runs; raw/JAR outputs and per-file failures are retained under raw/ per repository.
 - manifest.json: environment details, resolved SHAs, tool metadata and logs.
 
 **Research limitations:** file-level observations may contain multiple classes; failure to discover tests, rename inaccuracies, unobserved confounders, missing production-file mappings, Git message noise, observational causality, missing PIT attribution. Discuss each with Analyst and Experimenter before scaling. See docs/RESEARCH_CONTRACT.md.
@@ -64,3 +64,11 @@ Select the study repositories based on a documented sampling protocol. Repositor
     python -m pytest -q
 
 No external Java build or long real-repository trial is performed by unit tests. A real-world tsDetect run and independent replication are mandatory before completing the Team 7 project.
+
+## Engineering pilots already executed
+
+See docs/PILOT_RESULTS.md for pinned commits and detector anomalies. Example real command:
+
+    python -m team7_pipeline run --config configs/junit4-pilot-002.json
+
+Runs cannot overwrite a completed output directory; select a new run_id/output_dir for a repeat. Local results/ and data/repos/ are ignored by Git. A successful process can still have per-file errors (status=partial), and reported numbers are not causal-study findings.

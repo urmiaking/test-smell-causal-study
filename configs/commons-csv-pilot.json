@@ -1,0 +1,16 @@
+{
+  "_comment": "Engineering integration pilot on Apache Commons CSV; not a representative causal sample. Refs intentionally pinned.",
+  "run_id": "commons-csv-pilot-001",
+  "output_dir": "../results/commons-csv-pilot-001",
+  "cache_dir": "../data/repos",
+  "detector_jar": "../tools/TestSmellDetector.jar",
+  "detector_timeout_seconds": 240,
+  "repositories": [
+    {
+      "id": "commons-csv",
+      "source": "https://github.com/apache/commons-csv.git",
+      "snapshot_ref": "2dc0d8900677a9750ec4a59d5506a9ad0fe1fd02",
+      "followup_ref": "584a79a034aea8037ed6751acc39a0ea5918befc"
+    }
+  ]
+}

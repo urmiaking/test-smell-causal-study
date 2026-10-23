@@ -1,0 +1,15 @@
+﻿colorama==0.4.6
+gitdb==4.0.12
+GitPython==3.2.1
+iniconfig==2.3.1
+lizard==1.24.2
+packaging==26.3
+pathspec==1.1.1
+pluggy==1.7.0
+PyDriller==2.12
+Pygments==2.21.0
+pytest==9.1.1
+pytz==2026.5
+smmap==5.0.3
+# Editable Git install with no remote (team7-pipeline==0.1.0)
+types-pytz==2026.5.0.20261006

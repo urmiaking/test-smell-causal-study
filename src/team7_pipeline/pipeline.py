@@ -13,13 +13,13 @@ from importlib.metadata import version
 from pathlib import Path
 from typing import Any
 
-from .detector import run_tsdetect
+from .detector_batch import run_tsdetect
 from .discovery import discover
 from .gitutils import acquire_repository, commit_sha, ensure_ancestor, snapshot_checkout
 from .miner import mine_history
 
-TEST_FIELDS = ["repository_id", "snapshot_sha", "test_file", "production_file", "test_loc", "assert_count", "detector_status"]
-SMELL_FIELDS = ["repository_id", "snapshot_sha", "test_file", "smell_type", "smell_present"]
+TEST_FIELDS = ["repository_id", "snapshot_sha", "test_file", "production_file", "test_framework", "test_loc", "assert_count", "detector_status"]
+SMELL_FIELDS = ["repository_id", "snapshot_sha", "test_file", "smell_type", "smell_present", "smell_status", "smell_raw_value"]
 EVENT_FIELDS = ["repository_id", "snapshot_sha", "followup_sha", "test_file", "commit_sha", "commit_date", "author_name", "potential_bugfix_message"]
 OUTCOME_FIELDS = ["repository_id", "snapshot_sha", "followup_sha", "test_file", "followup_test_file", "change_commits", "potential_bugfix_commits", "followup_commits_all_repo", "followup_observed"]
 ANALYSIS_FIELDS = TEST_FIELDS + ["followup_sha", "followup_test_file", "change_commits", "potential_bugfix_commits", "followup_commits_all_repo", "followup_observed"]
@@ -75,6 +75,10 @@ def run(config_path: Path, skip_detector: bool = False) -> dict[str, Any]:
         "pydriller": version("PyDriller"),
         "git": subprocess.run(["git", "--version"], text=True, capture_output=True).stdout.strip(),
         "skip_detector": skip_detector, "repositories": [],
+        "cpu_count": __import__("os").cpu_count(),
+        "pip_freeze": subprocess.run([sys.executable, "-m", "pip", "freeze"], capture_output=True, text=True, timeout=45).stdout.splitlines(),
+        "pipeline_git_sha": subprocess.run(["git", "-C", str(Path(__file__).resolve().parents[2]), "rev-parse", "HEAD"], capture_output=True, text=True, timeout=20).stdout.strip(),
+        "pipeline_git_dirty": bool(subprocess.run(["git", "-C", str(Path(__file__).resolve().parents[2]), "status", "--porcelain"], capture_output=True, text=True, timeout=20).stdout.strip()),
     }
     rows_tests: list[dict[str, Any]] = []
     rows_smells: list[dict[str, Any]] = []
@@ -102,7 +106,13 @@ def run(config_path: Path, skip_detector: bool = False) -> dict[str, Any]:
             with snapshot_checkout(repo, snapshot) as checkout:
                 tests = discover(checkout, repository_id, snapshot)
                 state["test_count"] = len(tests)
+                repo_info["framework_counts"] = {framework: sum(t["test_framework"] == framework for t in tests) for framework in sorted({str(t["test_framework"]) for t in tests})}
                 events, outcomes = mine_history(repo, repository_id, snapshot, followup, [str(t["test_file"]) for t in tests])
+                for test in tests:
+                    test["detector_status"] = "failed"
+                rows_tests.extend(tests)
+                rows_events.extend(events)
+                rows_outcomes.extend(outcomes)
                 if skip_detector:
                     smells = []
                     detect_info = {"status": "skipped_explicitly"}
@@ -112,13 +122,13 @@ def run(config_path: Path, skip_detector: bool = False) -> dict[str, Any]:
                         jar, checkout, repository_id, tests, output / "raw" / repository_id, timeout,
                     )
                 status = detect_info["status"]
+                measured_files = {str(s["test_file"]) for s in smells}
+                failed_files = set(detect_info.get("failed_test_files", []))
                 for test in tests:
-                    test["detector_status"] = status
+                    name = str(test["test_file"])
+                    test["detector_status"] = ("skipped_explicitly" if skip_detector else ("measured" if name in measured_files else ("failed" if name in failed_files else "not_measured")))
                 repo_info["detector"] = detect_info
-                rows_tests.extend(tests)
                 rows_smells.extend(smells)
-                rows_events.extend(events)
-                rows_outcomes.extend(outcomes)
                 state["smell_rows"] = len(smells)
                 state["status"] = "complete" if status == "complete" else ("no_smells_measured" if skip_detector else status)
         except Exception as exc:
@@ -146,6 +156,8 @@ def run(config_path: Path, skip_detector: bool = False) -> dict[str, Any]:
         "repositories": len(statuses), "failed": sum(s["status"] == "failed" for s in statuses),
         "tests": len(rows_tests), "smell_observations": len(rows_smells),
         "commit_events": len(rows_events),
+        "measured_smell_values": sum(s["smell_status"] == "measured" for s in rows_smells),
+        "missing_smell_values": sum(s["smell_status"] != "measured" for s in rows_smells),
     }
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
     return {"output": str(output), **manifest["counts"], "status": statuses}
