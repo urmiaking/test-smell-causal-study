@@ -1,0 +1,16 @@
+{
+  "_comment": "Synthetic smoke test only, never empirical evidence.",
+  "run_id": "synthetic-smoke",
+  "output_dir": "../results/synthetic-smoke",
+  "cache_dir": "../data/repos",
+  "detector_jar": "../tools/TestSmellDetector.jar",
+  "detector_timeout_seconds": 180,
+  "repositories": [
+    {
+      "id": "test7-fixture",
+      "source": "../",
+      "snapshot_ref": "HEAD",
+      "followup_ref": "HEAD"
+    }
+  ]
+}

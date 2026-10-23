@@ -1,0 +1,1 @@
+Place an approved tsDetect standalone JAR here as TestSmellDetector.jar. Do not commit unverified third-party binaries. Record release, SHA-256 and Java version.
