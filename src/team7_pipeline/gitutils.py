@@ -36,6 +36,11 @@ def acquire_repository(source: str, cache_dir: Path, repository_id: str) -> Path
             # Cached repositories are pinned at their *already available* refs; do not
             # silently fetch a different revision on repeated runs.
             git(dest, "rev-parse", "--is-inside-work-tree")
+            actual_origin = git(dest, "remote", "get-url", "origin")
+            def normalized_url(value: str) -> str:
+                return value.strip().lower().rstrip("/").removesuffix(".git")
+            if normalized_url(actual_origin) != normalized_url(source):
+                raise RuntimeError(f"Cache source mismatch for {repository_id}: {actual_origin!r} != {source!r}")
         return dest
     path = Path(source).expanduser().resolve()
     if not path.exists():

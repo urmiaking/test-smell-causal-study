@@ -1,0 +1,43 @@
+{
+  "_comment": "Generated from GitHub public search. SEE adjacent sampling audit for selection bias and exclusions.",
+  "run_id": "github-example-sample",
+  "output_dir": "../results/github-example-sample",
+  "cache_dir": "../data/repos",
+  "detector_jar": "../tools/TestSmellDetector.jar",
+  "batch_size": 25,
+  "detector_timeout_seconds": 180,
+  "random_seed": 7,
+  "sampling_protocol": {
+    "type": "GitHubSearch_star_ranked_seeded_candidates",
+    "query": "topic:testing language:Java stars:>=20 fork:false archived:false",
+    "seed": 7,
+    "baseline_date_utc": "2025-01-01",
+    "followup_date_utc": "2025-07-01",
+    "discovered_at_utc": "2026-10-23T16:53:18.085681+00:00",
+    "caveats": "Search ranking, public-only sampling, GitHub API caps and candidate exclusions limit external validity."
+  },
+  "repositories": [
+    {
+      "id": "citrusframework_citrus",
+      "source": "https://github.com/citrusframework/citrus.git",
+      "snapshot_ref": "e9f69472f68a3840a37260c01e8405f7b0773212",
+      "followup_ref": "45b09d699607c8e33d045d246a52b0b559aa85de",
+      "github_full_name": "citrusframework/citrus",
+      "github_stars_at_sampling": 485,
+      "baseline_date_utc": "2025-01-01",
+      "followup_date_utc": "2025-07-01",
+      "ahead_by": 128
+    },
+    {
+      "id": "arquillian_arquillian-cube",
+      "source": "https://github.com/arquillian/arquillian-cube.git",
+      "snapshot_ref": "3ab43ce42648fce96faaeaf42a791abedd361824",
+      "followup_ref": "9fa3eb005ababc43a63be32a6c3bc4ff5c26f309",
+      "github_full_name": "arquillian/arquillian-cube",
+      "github_stars_at_sampling": 126,
+      "baseline_date_utc": "2025-01-01",
+      "followup_date_utc": "2025-07-01",
+      "ahead_by": 51
+    }
+  ]
+}

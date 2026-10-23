@@ -1,23 +1,25 @@
-# Team 7 Developer roadmap
+# Developer roadmap — implementation vs scientific approvals
 
-## Implemented and verified
-- [x] Repository + Git initialization, Python isolated venv, Java availability
-- [x] tsDetect/PyDriller tool audit and draft data contract
-- [x] Installable CLI, JSON config, documentation, Pytest tests
-- [x] Git local/HTTPS repository resolver, immutable snapshot refs
-- [x] Time-bounded PyDriller change-proneness, rename-aware file matching
-- [x] Java test file discovery with framework heuristic and production candidates
-- [x] tsDetect v2.2 input/output normalization, raw-preserving isolated batches, failure bisection
-- [x] Normalized CSV tables + reproducibility manifest + failed-file logs
-- [x] Synthetic and public Java repository engineering pilots (including JUnit4 partial result)
+## Developer implementation completed and verified locally
 
-## Not completed (scientific research / scale)
-- [ ] Team sign-off on unit of observation, DAG, confounders and PIT outcome attribution
-- [ ] Pre-registered Github sampling strategy and sample audit trail
-- [ ] Durable multi-project resume/checkpoint and rate-limited Github repository discovery
-- [ ] Independent pilot replication on representative JUnit4 Maven repositories
-- [ ] Manual validation of smell precision
-- [ ] PIT mutation score on eligible subset (Experimenter)
-- [ ] Causal estimation, robustness/sensitivity and paper (Analyst)
+- [x] Initialize repository, Python package and CLI
+- [x] Audit verified tsDetect v2.2 and PyDriller; record SHA256 and runtime versions
+- [x] Pin snapshot/followup refs and Git mining window; handle Git-recognized renames
+- [x] Discover Java test candidates, framework heuristics, production mapping candidates
+- [x] Run tsDetect, preserve raw/missing/count values; bisect crashes rather than drop whole repository
+- [x] Build test/smell/change/outcome datasets with per-file statuses and manifest
+- [x] **Stage 8 software integration:** implement strict machine-validated keys and optional PIT attribution CSV join; handoff contract included
+- [x] **Stage 9 implementation:** audited GitHub sampling with UTC snapshot dates; per-repo atomic checksummed checkpoints, resumable multi-repo run, immutable fingerprint, explicit failed-only retry with archive
+- [x] **Stage 10 engineering pilot:** interrupted 2-repo run resumed successfully; fresh run on same machine produced all 6 semantically identical output CSV files; contract validator passed
 
-This is a software engineering integration prototype, not a completed causal study. Details: PILOT_RESULTS.md.
+## Scientific / externally owned checkpoints not yet completed
+
+- [ ] Three-member team signs observation unit, PIT protocol and DAG/confounders
+- [ ] Professor approves sample selection and Go/No-Go milestone
+- [ ] Analyst completes manual validation (including ambiguity in JUnit5/helper test discovery)
+- [ ] Experimenter verifies PIT attribution and executes baselines
+- [ ] Independent **other-machine** repetition by another member (only same-machine equivalence verified)
+- [ ] Actual 1000-repository load test, data-policy and resource evaluation
+- [ ] Statistical causal analysis, robustness checks and scientific report
+
+**Conclusion:** Developer-side engineering deliverable and interfaces are implemented and locally verified; full *research methodology approval*, PIT measurements and independent second-machine signoff are not something software can self-certify.

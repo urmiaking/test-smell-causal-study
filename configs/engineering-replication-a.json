@@ -1,0 +1,27 @@
+{
+  "run_id": "engineering-replication-a",
+  "output_dir": "../results/engineering-replication-a",
+  "sampling_protocol": {
+    "type": "engineering_purposive_nonrepresentative",
+    "rationale": "Chosen to exercise old tsDetect against a JUnit4 project and a newer mixed-framework Java project; NOT population inference",
+    "selection_date_utc": "2026-10-23"
+  },
+  "cache_dir": "../data/repos",
+  "detector_jar": "../tools/TestSmellDetector.jar",
+  "detector_timeout_seconds": 240,
+  "batch_size": 25,
+  "repositories": [
+    {
+      "id": "commons-csv",
+      "source": "https://github.com/apache/commons-csv.git",
+      "snapshot_ref": "2dc0d8900677a9750ec4a59d5506a9ad0fe1fd02",
+      "followup_ref": "584a79a034aea8037ed6751acc39a0ea5918befc"
+    },
+    {
+      "id": "junit4",
+      "source": "https://github.com/junit-team/junit4.git",
+      "snapshot_ref": "354b72771d70255a860001c6b11786897c1c2fbd",
+      "followup_ref": "890f3c972647de378f25e7271d8fbbd9d3456b79"
+    }
+  ]
+}
